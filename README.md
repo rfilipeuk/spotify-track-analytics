@@ -31,11 +31,13 @@ spotify-track-analytics/
 └── requirements.txt           # Environment dependencies
 ```
 
-##🚀 How to Run Locally
+## 🚀 How to Run Locally
+
 Follow these steps to reproduce this analysis in your local environment:
 
+```bash
 # 1. Clone the repository
-git clone [https://github.com/rfilipeuk/spotify-track-analytics.git]
+git clone https://github.com/rfilipeuk/spotify-track-analytics.git
 cd spotify-track-analytics
 
 # 2. Set up virtual environment
