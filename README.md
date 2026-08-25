@@ -29,3 +29,21 @@ spotify-track-analytics/
 ├── .gitignore                 # Exclusion rules (venv, checkpoints, system files)
 ├── README.md                  # Project documentation
 └── requirements.txt           # Environment dependencies
+```
+
+##🚀 How to Run Locally
+Follow these steps to reproduce this analysis in your local environment:
+
+# 1. Clone the repository
+git clone [https://github.com/rfilipeuk/spotify-track-analytics.git]
+cd spotify-track-analytics
+
+# 2. Set up virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Open Jupyter Notebook
+jupyter notebook notebooks/01_exploratory_analysis.ipynb
