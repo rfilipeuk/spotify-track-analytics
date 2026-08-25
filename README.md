@@ -1,5 +1,3 @@
-# Spotify Tracks Analytics — Exploratory Data Analysis (EDA)
-
 # Spotify Tracks Analytics — End-to-End Data Analytics Pipeline
 
 A multi-stage data analytics portfolio project exploring an 85,000-record Spotify catalogue. Covers exploratory data analysis (EDA), relational schema design (SQLite), and analytical SQL querying.
