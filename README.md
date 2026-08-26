@@ -22,14 +22,21 @@ A multi-stage data analytics portfolio project exploring an 85,000-record Spotif
   * **Window Functions:** Computed top 3 tracks per genre using `ROW_NUMBER() OVER(PARTITION BY genre_id ORDER BY stream_count DESC)`.
   * **Conditional Aggregations:** Evaluated label commercial efficiency and hit conversion ratios ($\text{Popularity} \ge 75$).
   * **Longitudinal Aggregations:** Analyzed acoustic trends and streaming evolutions post-2000 using CTEs and relational joins.
+ 
+### Stage 3: Predictive Modelling & Feature Importance
+* **Target Leakage Prevention:** Identified and removed `log_stream_count` from predictors, preventing proxy-variable distortion and isolating intrinsic audio/metadata signals.
+* **Pipeline Engineering:** Built Scikit-Learn pipelines integrating `ColumnTransformer`, `StandardScaler` for continuous acoustic metrics, and `OneHotEncoder` for categorical metadata.
+* **Comparative Evaluation:** Evaluated a regularised linear baseline (`Ridge Regression`) against non-linear ensemble trees (`Random Forest Regressor`).
+* **Feature Importance & Coefficients:** Extracted Gini importance scores and standardised beta coefficients, highlighting duration, tempo, loudness, and genre indicators.
 
 ---
 
 ## 💡 Key Findings & Strategic Insights
 
-* **Non-Linear Dynamics:** Popularity cannot be predicted through linear correlations with individual acoustic features alone, indicating that interaction effects and non-linear algorithms are required.
-* **Streaming Asymmetry:** While median streams sit at ~2,000 per track, extreme right-tail outliers exceed 20,000,000 streams, justifying logarithmic scaling (`log_stream_count`) for downstream models.
-* **Commercial Demand vs Uniform Ratings:** Average popularity remains uniform across genres (~48 points), but total streaming consumption is heavily concentrated in leading commercial genres.
+* **Target Leakage Identified:** Including stream counts artificially inflates model accuracy ($R^2 \approx 0.54$) because popularity is derived from streams. Removing it isolates the true impact of audio features.
+* **Acoustic Limits vs External Drivers:** Audio traits alone (tempo, energy, loudness) hold very low predictive power, proving track success depends primarily on external factors like playlisting, marketing, and artist reach.
+* **Even Feature Distribution:** Without stream leakage, predictive weight distributes evenly across duration (~12.5%), tempo (~12.5%), loudness (~12.2%), and instrumentalness (~11.0%).
+* **Streaming Concentration:** While mean popularity remains steady across genres (~48 points), total stream volume is heavily concentrated in leading commercial genres with extreme right-tail outliers (>20M streams).
 
 ---
 
@@ -49,7 +56,8 @@ spotify-track-analytics/
 │   └── spotify_warehouse.db
 ├── notebooks/
 │   ├── 01_exploratory_analysis.ipynb
-│   └── 02_relational_sql_analysis.ipynb
+│   ├── 02_relational_sql_analysis.ipynb
+│   └── 03_predictive_modeling.ipynb
 ├── .gitignore
 ├── README.md
 └── requirements.txt
@@ -74,5 +82,6 @@ spotify-track-analytics/
    ```bash
    jupyter notebook
    ```
-   * Open `notebooks/01_exploratory_analysis.ipynb` for EDA and visualisations.
-   * Open `notebooks/02_relational_sql_analysis.ipynb` for database initialisation and SQL queries.
+   * Open `notebooks/01_exploratory_analysis.ipynb` for EDA and business visual analysis.
+   * Open `notebooks/02_relational_sql_analysis.ipynb` for star schema initialization and SQL queries.
+   * Open `notebooks/03_predictive_modeling.ipynb` for ML pipelines and feature importance analysis.
