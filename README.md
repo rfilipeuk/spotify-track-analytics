@@ -1,33 +1,59 @@
-# Spotify Tracks Analytics — End-to-End Data Analytics Pipeline
+# Spotify Track Analytics & Predictive Modeling Pipeline
 
-A multi-stage data analytics portfolio project exploring an 85,000-record Spotify catalogue. Covers exploratory data analysis (EDA), relational schema design (SQLite), and analytical SQL querying.
+An end-to-end data science and data engineering portfolio project analysing ~85,000 Spotify tracks (2015–2025). This repository demonstrates exploratory data analysis (EDA), strategic business visualization, star schema relational database modeling, advanced SQLite warehousing, machine learning with target leakage prevention, and an interactive Streamlit inference web app.
 
 ---
 
-## 📊 Project Workflow
-### Stage 1: Exploratory Data Analysis & Business Visualisations
-* **Data Integrity & Audit:** Validated completeness across 85,000 records with 0 missing values post-cleaning, standardised descriptive statistics formatting, and inspected memory footprints.
-* **Target & Correlation Analysis:** Evaluated track popularity distribution (normally distributed around a mean of ~48.2) and verified near-zero linear collinearity between standalone acoustic attributes and popularity scores.
-* **Strategic Business Questions Answered:**
-  * **Top Artist Volume & Efficiency:** Evaluated cumulative streams and identified efficiency outliers (streams per released track).
-  * **Genre Streaming Demand:** Aggregated total streaming volume by genre to highlight commercial concentration versus niche categories.
-  * **Content Impact:** Assessed the statistical distribution of explicit vs non-explicit content across stream tiers and popularity.
-  * **Temporal Trends (2015–2025):** Mapped day-of-week release volume alongside multi-year streaming consumption curves.
+## 🏗️ Repository Architecture
+
+```text
+spotify-track-analytics/
+├── app.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── data/
+│   ├── raw/
+│   │   └── spotify_data.csv
+│   ├── spotify_data_processed.csv
+│   ├── spotify_warehouse.db
+│   └── spotify_rf_model.pkl
+└── notebooks/
+    ├── 01_exploratory_analysis.ipynb
+    ├── 02_relational_sql_analysis.ipynb
+    └── 03_predictive_modeling.ipynb
+```
+
+---
+
+## 📊 Project Stages & Workflow
+
+### Stage 1: Exploratory Data Analysis & Strategic Business Insights
+* **Data Integrity & Audit:** Cleaned and validated ~85,000 records with zero missing values post-processing, standardising acoustic measurements and memory consumption.
+* **Target & Correlation Analysis:** Evaluated popularity distributions (normally distributed around a mean of ~48.2) and verified near-zero linear collinearity across standalone acoustic attributes.
+* **Core Business Analysis:**
+  * **Artist Efficiency:** Mapped cumulative streams against catalogue volume to identify high-efficiency catalogue outliers.
+  * **Genre Demand:** Visualised streaming concentration across commercial tiers versus niche categories.
+  * **Content Dynamics:** Evaluated the statistical impact of explicit vs non-explicit content on streaming volume and popularity.
+  * **Temporal Trends (2015–2025):** Analyzed multi-year consumption velocity and day-of-week release distributions.
   * **Hit vs Catalog Signatures:** Compared acoustic profiles between breakout hits ($\text{Popularity} \ge 75$) and catalog inventory.
 
-### Stage 2: Relational Modelling & Advanced SQL Warehouse
-* **Star Schema Implementation:** Normalised flat CSV records into an analytical relational schema (`dim_labels`, `dim_genres`, and `fact_tracks`).
-* **Integrity & Index Optimisation:** Implemented `PRIMARY KEY`, `FOREIGN KEY` referential constraints, and optimised query execution times with B-tree indexes (`idx_tracks_popularity`, `idx_tracks_genre`).
-* **Analytical Queries:**
-  * **Window Functions:** Computed top 3 tracks per genre using `ROW_NUMBER() OVER(PARTITION BY genre_id ORDER BY stream_count DESC)`.
-  * **Conditional Aggregations:** Evaluated label commercial efficiency and hit conversion ratios ($\text{Popularity} \ge 75$).
-  * **Longitudinal Aggregations:** Analyzed acoustic trends and streaming evolutions post-2000 using CTEs and relational joins.
- 
+### Stage 2: Star Schema Modelling & SQL Data Warehousing
+* **Relational Normalization:** Structured flat data into an analytical Star Schema containing `dim_labels`, `dim_genres`, and `fact_tracks`.
+* **Integrity & Index Optimisation:** Implemented `PRIMARY KEY` and `FOREIGN KEY` referential constraints alongside B-Tree indexes (`idx_tracks_popularity`, `idx_tracks_genre`) for sub-millisecond query execution.
+* **Analytical Warehousing Queries:**
+  * **Window Functions:** Ranked top 3 tracks per genre using `ROW_NUMBER() OVER(PARTITION BY genre_id ORDER BY stream_count DESC)`.
+  * **Hit Rate Ratios:** Computed label conversion efficiency for tracks achieving $\text{Popularity} \ge 75$.
+  * **Longitudinal Trends:** Evaluated decade-over-decade acoustic shifts and streaming volume using CTEs and relational joins.
+
 ### Stage 3: Predictive Modelling & Feature Importance
 * **Target Leakage Prevention:** Identified and removed `log_stream_count` from predictors, preventing proxy-variable distortion and isolating intrinsic audio/metadata signals.
 * **Pipeline Engineering:** Built Scikit-Learn pipelines integrating `ColumnTransformer`, `StandardScaler` for continuous acoustic metrics, and `OneHotEncoder` for categorical metadata.
 * **Comparative Evaluation:** Evaluated a regularised linear baseline (`Ridge Regression`) against non-linear ensemble trees (`Random Forest Regressor`).
 * **Feature Importance & Coefficients:** Extracted Gini importance scores and standardised beta coefficients, highlighting duration, tempo, loudness, and genre indicators.
+
+### Stage 4: Interactive Dashboard Deployment
+* Developed an interactive web application using **Streamlit** to allow real-time track popularity simulations based on customizable acoustic sliders, release timing, and metadata inputs.
 
 ---
 
@@ -40,30 +66,7 @@ A multi-stage data analytics portfolio project exploring an 85,000-record Spotif
 
 ---
 
-## 🗄️ Database Schema & SQL Highlights
-* **Relational Normalisation:** Denormalised flat data split into dimension tables (`dim_labels`, `dim_genres`) and a centralised metrics fact table (`fact_tracks`) with foreign key constraints and query indexes.
-* **Intra-Genre Rankings:** Leveraged `ROW_NUMBER() OVER(PARTITION BY genre ORDER BY stream_count DESC)` to isolate top-performing catalog assets.
-* **Conditional Metrics:** Calculated label hit density via `SUM(CASE WHEN popularity >= 75 THEN 1.0 ELSE 0.0 END) / COUNT(*)`.
-
----
-## 🏗️ Repository Architecture
-```text
-spotify-track-analytics/
-├── data/
-│   ├── raw/
-│   │   └── spotify_data.csv
-│   ├── spotify_data_processed.csv
-│   └── spotify_warehouse.db
-├── notebooks/
-│   ├── 01_exploratory_analysis.ipynb
-│   ├── 02_relational_sql_analysis.ipynb
-│   └── 03_predictive_modeling.ipynb
-├── .gitignore
-├── README.md
-└── requirements.txt
-```
-
-## 🚀 Quickstart
+## 🚀 Quickstart & Reproduction
 
 1. **Clone the repository:**
    ```bash
@@ -71,17 +74,23 @@ spotify-track-analytics/
    cd spotify-track-analytics
    ```
 
-2. **Set up Python environment:**
+2. **Set up virtual environment:**
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   conda create -n spotify-env python=3.10 -y
+   conda activate spotify-env
    pip install -r requirements.txt
    ```
 
-3. **Run notebooks:**
+3. **Run analytical notebooks:**
    ```bash
    jupyter notebook
    ```
-   * Open `notebooks/01_exploratory_analysis.ipynb` for EDA and business visual analysis.
-   * Open `notebooks/02_relational_sql_analysis.ipynb` for star schema initialization and SQL queries.
-   * Open `notebooks/03_predictive_modeling.ipynb` for ML pipelines and feature importance analysis.
+   * `notebooks/01_exploratory_analysis.ipynb` — EDA & Business Visualizations
+   * `notebooks/02_relational_sql_analysis.ipynb` — Star Schema & SQLite Warehousing
+   * `notebooks/03_predictive_modeling.ipynb` — Machine Learning & Interpretability
+
+4. **Launch interactive Streamlit app:**
+   ```bash
+   streamlit run app.py
+   ```
+   Open `http://localhost:8501` in your browser to simulate track popularity in real time.
