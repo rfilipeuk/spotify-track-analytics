@@ -4,17 +4,32 @@ A multi-stage data analytics portfolio project exploring an 85,000-record Spotif
 
 ---
 
-## 📌 Project Stages & Architecture
-* **Stage 1: Exploratory Data Analysis (EDA)** — Cleaned and validated schema (0 nulls, 0 duplicates), analysed acoustic distributions, and evaluated correlation structures.
-* **Stage 2: Relational Data Modelling & Advanced SQL** — Structured normalised 3NF star-schema tables (`dim_labels`, `dim_genres`, `fact_tracks`) and executed business queries using CTEs and Window Functions.
+## 📊 Project Workflow
+### Stage 1: Exploratory Data Analysis & Business Visualisations
+* **Data Integrity & Audit:** Validated completeness across 85,000 records with 0 missing values post-cleaning, standardised descriptive statistics formatting, and inspected memory footprints.
+* **Target & Correlation Analysis:** Evaluated track popularity distribution (normally distributed around a mean of ~48.2) and verified near-zero linear collinearity between standalone acoustic attributes and popularity scores.
+* **Strategic Business Questions Answered:**
+  * **Top Artist Volume & Efficiency:** Evaluated cumulative streams and identified efficiency outliers (streams per released track).
+  * **Genre Streaming Demand:** Aggregated total streaming volume by genre to highlight commercial concentration versus niche categories.
+  * **Content Impact:** Assessed the statistical distribution of explicit vs non-explicit content across stream tiers and popularity.
+  * **Temporal Trends (2015–2025):** Mapped day-of-week release volume alongside multi-year streaming consumption curves.
+  * **Hit vs Catalog Signatures:** Compared acoustic profiles between breakout hits ($\text{Popularity} \ge 75$) and catalog inventory.
+
+### Stage 2: Relational Modelling & Advanced SQL Warehouse
+* **Star Schema Implementation:** Normalised flat CSV records into an analytical relational schema (`dim_labels`, `dim_genres`, and `fact_tracks`).
+* **Integrity & Index Optimisation:** Implemented `PRIMARY KEY`, `FOREIGN KEY` referential constraints, and optimised query execution times with B-tree indexes (`idx_tracks_popularity`, `idx_tracks_genre`).
+* **Analytical Queries:**
+  * **Window Functions:** Computed top 3 tracks per genre using `ROW_NUMBER() OVER(PARTITION BY genre_id ORDER BY stream_count DESC)`.
+  * **Conditional Aggregations:** Evaluated label commercial efficiency and hit conversion ratios ($\text{Popularity} \ge 75$).
+  * **Longitudinal Aggregations:** Analyzed acoustic trends and streaming evolutions post-2000 using CTEs and relational joins.
 
 ---
 
-## 📊 Key Findings & Analytics Insights
-* **Target Distribution:** Popularity scores follow a near-normal distribution centred around ~48 points, showing that breakout viral tracks (>80 popularity) represent a tiny fraction of the catalogue.
-* **Linear Feature Independence:** Standalone acoustic features (`danceability`, `energy`, `tempo`, `loudness`) show near-zero linear correlation with popularity scores, proving that popularity cannot be modelled using simple linear relationships.
-* **Streaming Relationship:** Moderate positive correlation (0.36) between stream volume and popularity scores.
-* ** Catalogue Efficiency (SQL):** Aggregated hit-to-catalogue ratios reveal that major labels maintain consistent average popularity, while specific niche labels achieve higher density of high-popularity tracks ($\ge 75$).
+## 💡 Key Findings & Strategic Insights
+
+* **Non-Linear Dynamics:** Popularity cannot be predicted through linear correlations with individual acoustic features alone, indicating that interaction effects and non-linear algorithms are required.
+* **Streaming Asymmetry:** While median streams sit at ~2,000 per track, extreme right-tail outliers exceed 20,000,000 streams, justifying logarithmic scaling (`log_stream_count`) for downstream models.
+* **Commercial Demand vs Uniform Ratings:** Average popularity remains uniform across genres (~48 points), but total streaming consumption is heavily concentrated in leading commercial genres.
 
 ---
 
@@ -24,33 +39,40 @@ A multi-stage data analytics portfolio project exploring an 85,000-record Spotif
 * **Conditional Metrics:** Calculated label hit density via `SUM(CASE WHEN popularity >= 75 THEN 1.0 ELSE 0.0 END) / COUNT(*)`.
 
 ---
-## 📁 Repository Structure
+## 🏗️ Repository Architecture
 ```text
 spotify-track-analytics/
-├── data/                      # Processed dataset & SQLite warehouse
-├── notebooks/                 # Executable Jupyter Notebooks
+├── data/
+│   ├── raw/
+│   │   └── spotify_data.csv
+│   ├── spotify_data_processed.csv
+│   └── spotify_warehouse.db
+├── notebooks/
 │   ├── 01_exploratory_analysis.ipynb
 │   └── 02_relational_sql_analysis.ipynb
-├── .gitignore                 # Exclusion rules (venv, .db, checkpoints)
-├── README.md                  # Project documentation
-└── requirements.txt           # Environment dependencies
+├── .gitignore
+├── README.md
+└── requirements.txt
 ```
 
-## 🚀 How to Run Locally
+## 🚀 Quickstart
 
-Follow these steps to reproduce this analysis in your local environment:
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/rfilipeuk/spotify-track-analytics.git](https://github.com/rfilipeuk/spotify-track-analytics.git)
+   cd spotify-track-analytics
+   ```
 
-```bash
-# 1. Clone the repository
-git clone [https://github.com/rfilipeuk/spotify-track-analytics.git](https://github.com/rfilipeuk/spotify-track-analytics.git)
-cd spotify-track-analytics
+2. **Set up Python environment:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
 
-# 2. Set up virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Open Jupyter Notebook
-jupyter notebook
+3. **Run notebooks:**
+   ```bash
+   jupyter notebook
+   ```
+   * Open `notebooks/01_exploratory_analysis.ipynb` for EDA and visualisations.
+   * Open `notebooks/02_relational_sql_analysis.ipynb` for database initialisation and SQL queries.
