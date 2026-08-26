@@ -55,6 +55,8 @@ spotify-track-analytics/
 ### Stage 4: Interactive Dashboard Deployment
 * Developed an interactive web application using **Streamlit** to allow real-time track popularity simulations based on customizable acoustic sliders, release timing, and metadata inputs.
 
+![Spotify Popularity Predictor Dashboard](assets/dashboard_preview.png)
+
 ---
 
 ## 💡 Key Findings & Strategic Insights
