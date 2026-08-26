@@ -2,7 +2,7 @@
 
 An end-to-end data science and data engineering portfolio project analysing ~85,000 Spotify tracks (2015–2025). This repository demonstrates exploratory data analysis (EDA), strategic business visualization, star schema relational database modeling, advanced SQLite warehousing, machine learning with target leakage prevention, and an interactive Streamlit inference web app.
 
----
+--- 
 
 ## 🏗️ Repository Architecture
 
